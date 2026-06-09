@@ -36,7 +36,7 @@ formEl.addEventListener('submit', async (e) => {
         console.log(data);
 
         if (data.hits.length === 0) {
-             iziToast.error({
+            iziToast.error({
                 title: 'Sorry, there are no images matching your search query. Please try again!',
                 position: 'topRight'
             });
@@ -45,12 +45,14 @@ formEl.addEventListener('submit', async (e) => {
         }
         totalPages = Math.ceil(data.totalHits / PER_PAGE);
         console.log(totalPages)
-        const markup = createGallery(data.hits);
-        // console.log(markup)
-        ulElem.innerHTML = markup;
-        lightbox.refresh();
+        createGallery(data.hits, page);
 
-        if (page < totalPages) {
+        if (page >= totalPages) {
+            iziToast.info({
+                title: `We're sorry, but you've reached the end of search results.`,
+                position: 'topRight'
+            });
+        } else {
             showLoadMoreButton();
         }
     } catch {
@@ -72,9 +74,8 @@ btnEl.addEventListener('click', async () => {
     try {
         const data = await getImagesByQuery(inputValue, page);
         console.log(data);
-        const markup = createGallery(data.hits);
-        ulElem.insertAdjacentHTML('beforeend', markup);
-        lightbox.refresh();
+        createGallery(data.hits, page);
+        checkTotalPages();
     } catch {
         iziToast.error({
             title: 'Sorry, something went wrong',
@@ -83,8 +84,7 @@ btnEl.addEventListener('click', async () => {
     }
 
     hideLoader();
-    checkTotalPages();
-
+    
     const liEl = document.querySelector('.gallery-item')
     const rect = liEl.getBoundingClientRect();
     console.log(rect)
@@ -92,7 +92,6 @@ btnEl.addEventListener('click', async () => {
         top: rect.height * 2,
         behavior: "smooth",
     });
-
 });
 
 

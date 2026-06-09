@@ -42,10 +42,14 @@ export function imagesTemplate(arr) {
 };
 
 
-export function createGallery(images) {
-  return imagesTemplate(images);
-  // ulElem.innerHTML = markup;
-  // lightbox.refresh();
+export function createGallery(images, currentPage) {
+  const markup = imagesTemplate(images);
+  if (currentPage === 1) {
+    ulElem.innerHTML = markup;
+  } else {
+    ulElem.insertAdjacentHTML('beforeend', markup);
+  }
+  lightbox.refresh();
 };
 
 export function clearGallery() {
