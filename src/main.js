@@ -69,6 +69,7 @@ formEl.addEventListener('submit', async (e) => {
 
 btnEl.addEventListener('click', async () => {
     page += 1;
+    hideLoadMoreButton();
     showLoader();
 
     try {
@@ -76,6 +77,16 @@ btnEl.addEventListener('click', async () => {
         console.log(data);
         createGallery(data.hits, page);
         checkTotalPages();
+
+        const liEl = document.querySelector('.gallery-item')
+        if (liEl) {
+            const rect = liEl.getBoundingClientRect();
+            console.log(rect)
+            window.scrollBy({
+                top: rect.height * 2,
+                behavior: "smooth",
+            });
+        } 
     } catch {
         iziToast.error({
             title: 'Sorry, something went wrong',
@@ -84,14 +95,6 @@ btnEl.addEventListener('click', async () => {
     }
 
     hideLoader();
-    
-    const liEl = document.querySelector('.gallery-item')
-    const rect = liEl.getBoundingClientRect();
-    console.log(rect)
-    window.scrollBy({
-        top: rect.height * 2,
-        behavior: "smooth",
-    });
 });
 
 
@@ -99,7 +102,6 @@ function checkTotalPages() {
     if (page < totalPages) {
         showLoadMoreButton();
     } else {
-        hideLoadMoreButton();
         iziToast.info({
             title: `We're sorry, but you've reached the end of search results.`,
             position: 'topRight'
